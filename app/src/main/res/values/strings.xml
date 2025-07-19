@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">CallTaskMonitor</string>
+    <string name="localhost">127.0.0.1</string>
+    <string name="server_on">Server ON</string>
+    <string name="server_off">Server OFF</string>
 </resources>
