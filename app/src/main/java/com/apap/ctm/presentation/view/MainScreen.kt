@@ -15,10 +15,15 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.apap.ctm.presentation.viewmodel.MainViewModel
 import com.apap.ctm.R
+import com.apap.ctm.presentation.viewmodel.MainViewModel
 import com.apap.ctm.resources.SERVER_DETAILS_TOP_PADDING
 import com.apap.ctm.resources.SPACER
 import com.apap.ctm.util.MockedCallLog
@@ -85,6 +90,17 @@ fun ServerLog() = LazyColumn {
     repeat(50) {
         item {
             MockedCallLog()
+            Spacer(Modifier.height(4.dp))
         }
     }
+}
+
+@Composable
+fun CallLogEntry(name: String, minutes: String, seconds: String) {
+    Text(text = buildAnnotatedString {
+        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+            append(name)
+        }
+        append(": $minutes min $seconds s")
+    })
 }
