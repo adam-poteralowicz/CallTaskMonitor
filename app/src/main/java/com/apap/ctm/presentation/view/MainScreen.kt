@@ -41,8 +41,8 @@ fun MainScreen(
     Spacer(Modifier.height(SPACER))
     ServerButtons(
         isServerOnline = isServerOnline.value,
-        onServerOn = { viewModel.onServerOn() },
-        onServerOff = { viewModel.onServerOff() }
+        onServerOn = { viewModel.onServerToggled(true) },
+        onServerOff = { viewModel.onServerToggled(false) }
     )
     Spacer(Modifier.height(SPACER))
     ServerLog()

@@ -3,4 +3,7 @@
     <string name="localhost">127.0.0.1</string>
     <string name="server_on">Server ON</string>
     <string name="server_off">Server OFF</string>
+    <string name="type_outgoing">outgoing</string>
+    <string name="type_incoming">incoming</string>
+    <string name="type_missed">missed</string>
 </resources>
