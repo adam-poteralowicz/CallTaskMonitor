@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,7 +38,31 @@ fun MainScreen(
     modifier = Modifier.fillMaxWidth(),
     horizontalAlignment = Alignment.CenterHorizontally
 ) {
-    val isServerOnline = viewModel.isServerOnline.collectAsState()
+    val isServerOnline = viewModel.serverStartedFlow.collectAsState()
+    val shouldShowDialog = viewModel.showDialogFlow.collectAsState()
+
+    if (shouldShowDialog.value.isNotEmpty()) {
+        val permission = shouldShowDialog.value.joinToString()
+        AlertDialog(
+            onDismissRequest = { viewModel.onPermissionsNotGranted(emptyList()) },
+            title = { Text(stringResource(R.string.alert_dialog_title)) },
+            text = {
+                Text(
+                    text = stringResource(
+                        R.string.alert_dialog_msg,
+                        stringResource(R.string.permission_name, permission)
+                    )
+                )
+            },
+            confirmButton = {
+                Button(modifier = Modifier.fillMaxWidth(), onClick = {
+                    viewModel.onPermissionsNotGranted(emptyList())
+                }) {
+                    Text(text = stringResource(R.string.alert_dialog_positive_button))
+                }
+            }
+        )
+    }
 
     ServerDetails(
         address = stringResource(R.string.localhost),
@@ -101,6 +126,6 @@ fun CallLogEntry(name: String, minutes: String, seconds: String) {
         withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
             append(name)
         }
-        append(": $minutes min $seconds s")
+        append(stringResource(R.string.call_log_duration, minutes, seconds))
     })
 }

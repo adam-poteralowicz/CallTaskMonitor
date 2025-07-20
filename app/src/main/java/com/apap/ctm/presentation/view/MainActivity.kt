@@ -30,10 +30,13 @@ class MainActivity : ComponentActivity() {
     private val serverIntent by lazy { Intent(this, HttpService::class.java) }
     val serviceConnection by lazy { HttpService.HttpServiceConnection() }
 
+    private companion object {
+        const val PERMISSIONS_REQUEST_CODE = 123
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        askForReadCallPermissionIfNeeded()
         setContent {
             CallTaskMonitorTheme {
                 MainScreen()
@@ -42,35 +45,71 @@ class MainActivity : ComponentActivity() {
         setUpObservers()
     }
 
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String?>,
+        grantResults: IntArray,
+        deviceId: Int
+    ) {
+        if ((requestCode == PERMISSIONS_REQUEST_CODE).and(grantResults.all { it == PERMISSION_GRANTED })) {
+            startServer()
+        }
+        else {
+            val notGranted = mutableListOf<String>()
+            grantResults.filterNot { it == PERMISSION_GRANTED }.map { grantResults.indexOf(it) }.onEach { index ->
+                permissions[index]?.let { notGranted += it }
+            }
+            viewModel.onPermissionsNotGranted(notGranted)
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults, deviceId)
+    }
+
     private fun setUpObservers() {
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.toggleServerFlow.collectLatest {
-                    startServer(it)
+                    onServerToggled(it)
                 }
             }
         }
     }
 
-    private fun startServer(shouldTurnOn: Boolean) {
+    private fun onServerToggled(shouldTurnOn: Boolean) {
         if (shouldTurnOn) {
-            bindService(serverIntent, serviceConnection, BIND_AUTO_CREATE)
-            fetchCallLog()
+            ensurePermissionsGranted()
         } else {
             unbindService(serviceConnection)
+            viewModel.onServerStopped()
         }
     }
 
-    private fun askForReadCallPermissionIfNeeded() {
-        val permission = Manifest.permission.READ_CALL_LOG
-        if (ContextCompat.checkSelfPermission(this, permission) != PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(permission), 1)
-        }
+    private fun startServer() {
+        bindService(serverIntent, serviceConnection, BIND_AUTO_CREATE)
+        viewModel.onServerStarted()
+        fetchCallLog()
     }
 
     private fun fetchCallLog() {
         val cursor = contentResolver.query(CallLog.Calls.CONTENT_URI, null, null, null, CallLog.Calls.DATE + " DESC")
         viewModel.onCallLogFetched(cursor)
+    }
+
+    private fun ensurePermissionsGranted() {
+        var permissions = arrayOf<String>()
+        arrayOf(
+            Manifest.permission.READ_CALL_LOG,
+            Manifest.permission.READ_CONTACTS,
+            Manifest.permission.READ_PHONE_STATE
+        ).onEach {
+            if (ContextCompat.checkSelfPermission(this, it) != PERMISSION_GRANTED) {
+                permissions += it
+            }
+        }
+        return if (permissions.isEmpty()) {
+            startServer()
+        } else {
+            ActivityCompat.requestPermissions(this, permissions, PERMISSIONS_REQUEST_CODE)
+        }
     }
 }
 
