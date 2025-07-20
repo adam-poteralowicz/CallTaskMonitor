@@ -1,7 +1,6 @@
 package com.apap.ctm.presentation.viewmodel
 
 import android.database.Cursor
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.apap.ctm.domain.usecase.FetchCallLog
@@ -41,8 +40,6 @@ class MainViewModel @Inject constructor(
 
     fun onPermissionsNotGranted(permissions: List<String>) = viewModelScope.launch {
         if (permissions.isNotEmpty()) {
-            permissions.onEach { Log.e("Permissions", it) }
-            Log.e("permissions", permissions.toString())
             val permission = when (permissions.distinct().first()) {
                 "android.permission.READ_CALL_LOG" -> "READ CALL LOG"
                 "android.permission.READ_CONTACTS" -> "READ CONTACTS"

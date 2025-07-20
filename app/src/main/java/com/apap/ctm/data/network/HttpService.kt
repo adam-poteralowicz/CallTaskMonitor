@@ -9,6 +9,7 @@ import android.os.Binder
 import android.os.IBinder
 import android.telephony.TelephonyManager
 import android.util.Log
+import com.apap.ctm.util.getLocalIPAddress
 import io.ktor.serialization.gson.gson
 import io.ktor.server.application.install
 import io.ktor.server.engine.embeddedServer
@@ -33,13 +34,13 @@ class HttpService @Inject constructor() : Service() {
         val callback = object : CallStatusCallback {
             override fun onCallStarted(number: String) {
                 coroutineScope.launch {
-                    Log.d("HttpService", "Call started")
+                    Log.d("HttpService", "Call with $number started")
                 }
             }
 
             override fun onCallEnded(number: String) {
                 coroutineScope.launch {
-                    Log.d("HttpService", "Call ended")
+                    Log.d("HttpService", "Call with $number ended")
                 }
             }
         }
@@ -49,15 +50,20 @@ class HttpService @Inject constructor() : Service() {
     private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
     private companion object {
+        const val DEFAULT_NETWORK_INTERFACE = "0.0.0.0"
         const val PORT = 8080
     }
 
     override fun onCreate() {
         super.onCreate()
-        Thread {
+        coroutineScope.launch {
             registerCallStatusBroadcastReceiver()
             InternalLoggerFactory.setDefaultFactory(JdkLoggerFactory.INSTANCE)
-            server = embeddedServer(factory = Netty, port = PORT) {
+            server = embeddedServer(
+                factory = Netty,
+                port = PORT,
+                host = getLocalIPAddress(applicationContext).ifBlank { DEFAULT_NETWORK_INTERFACE }
+            ) {
                 install(ContentNegotiation) { gson {} }
                 callTaskController()
             }

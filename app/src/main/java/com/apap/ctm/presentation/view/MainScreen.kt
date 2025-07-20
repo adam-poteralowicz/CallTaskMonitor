@@ -33,6 +33,7 @@ private const val PORT = 8080
 
 @Composable
 fun MainScreen(
+    ip: String,
     viewModel: MainViewModel = hiltViewModel()
 ) = Column(
     modifier = Modifier.fillMaxWidth(),
@@ -65,7 +66,7 @@ fun MainScreen(
     }
 
     ServerDetails(
-        address = stringResource(R.string.localhost),
+        address = ip,
         port = PORT
     )
     Spacer(Modifier.height(SPACER))

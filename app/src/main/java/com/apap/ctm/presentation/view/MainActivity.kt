@@ -10,15 +10,18 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.apap.ctm.R
 import com.apap.ctm.data.network.HttpService
 import com.apap.ctm.presentation.viewmodel.MainViewModel
 import com.apap.ctm.ui.theme.CallTaskMonitorTheme
+import com.apap.ctm.util.getLocalIPAddress
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -28,7 +31,7 @@ class MainActivity : ComponentActivity() {
 
     private val viewModel: MainViewModel by viewModels()
     private val serverIntent by lazy { Intent(this, HttpService::class.java) }
-    val serviceConnection by lazy { HttpService.HttpServiceConnection() }
+    private val serviceConnection by lazy { HttpService.HttpServiceConnection() }
 
     private companion object {
         const val PERMISSIONS_REQUEST_CODE = 123
@@ -39,7 +42,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             CallTaskMonitorTheme {
-                MainScreen()
+                MainScreen(ip = getLocalIPAddress(applicationContext))
             }
         }
         setUpObservers()
@@ -117,6 +120,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Preview() {
     CallTaskMonitorTheme {
-        MainScreen()
+        MainScreen(ip = stringResource(R.string.localhost))
     }
 }
