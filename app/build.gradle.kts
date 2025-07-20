@@ -1,8 +1,9 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.hilt.android)
-    //alias(libs.plugins.google.ksp)
     alias(libs.plugins.kotlin.compose)
     id("kotlin-kapt")
 }
@@ -34,9 +35,6 @@ android {
         sourceCompatibility = JavaVersion.VERSION_19
         targetCompatibility = JavaVersion.VERSION_19
     }
-    kotlinOptions {
-        jvmTarget = "19"
-    }
     buildFeatures {
         compose = true
     }
@@ -46,6 +44,16 @@ android {
     }
     hilt {
         enableAggregatingTask = false
+    }
+    kotlin {
+        compilerOptions {
+            jvmTarget = JvmTarget.JVM_19
+        }
+    }
+    kapt {
+        arguments {
+            arg("room.schemaLocation", "$projectDir/schemas")
+        }
     }
 }
 
@@ -59,13 +67,20 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+
     implementation(libs.androidx.hilt.nav)
     implementation(libs.google.hilt)
     kapt(libs.google.hilt.compiler)
+
     implementation(libs.ktor.server.core)
     implementation(libs.ktor.server.content.negotiation)
     implementation(libs.ktor.server.netty)
     implementation(libs.ktor.gson)
+
+    implementation(libs.room.ktx)
+    implementation(libs.room.runtime)
+    kapt(libs.room.compiler)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
