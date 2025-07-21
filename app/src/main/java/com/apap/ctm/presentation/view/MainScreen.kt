@@ -65,11 +65,15 @@ fun MainScreen(
         )
     }
 
-    ServerDetails(
-        address = ip,
-        port = PORT
-    )
-    Spacer(Modifier.height(SPACER))
+    if (isServerOnline.value) {
+        ServerDetails(
+            address = ip,
+            port = PORT
+        )
+        Spacer(Modifier.height(SPACER))
+    } else {
+        Spacer(Modifier.height(SERVER_DETAILS_TOP_PADDING))
+    }
     ServerButtons(
         isServerOnline = isServerOnline.value,
         onServerOn = { viewModel.onServerToggled(true) },

@@ -32,6 +32,7 @@ class MainActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels()
     private val serverIntent by lazy { Intent(this, HttpService::class.java) }
     private val serviceConnection by lazy { HttpService.HttpServiceConnection() }
+    private val localIP by lazy { getLocalIPAddress(applicationContext) }
 
     private companion object {
         const val PERMISSIONS_REQUEST_CODE = 123
@@ -42,7 +43,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             CallTaskMonitorTheme {
-                MainScreen(ip = getLocalIPAddress(applicationContext))
+                MainScreen(ip = localIP)
             }
         }
         setUpObservers()
