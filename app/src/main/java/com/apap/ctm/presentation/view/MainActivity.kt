@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.os.Bundle
-import android.provider.CallLog
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -90,12 +89,6 @@ class MainActivity : ComponentActivity() {
     private fun startServer() {
         bindService(serverIntent, serviceConnection, BIND_AUTO_CREATE)
         viewModel.onServerStarted()
-        fetchCallLog()
-    }
-
-    private fun fetchCallLog() {
-        val cursor = contentResolver.query(CallLog.Calls.CONTENT_URI, null, null, null, CallLog.Calls.DATE + " DESC")
-        viewModel.onCallLogFetched(cursor)
     }
 
     private fun ensurePermissionsGranted() {

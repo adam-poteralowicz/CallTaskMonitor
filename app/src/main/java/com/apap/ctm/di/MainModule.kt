@@ -1,17 +1,16 @@
 package com.apap.ctm.di
 
-import android.content.Context
-import com.apap.ctm.util.ResourcesProvider
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ViewModelComponent
-import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 
 @Module
-@InstallIn(ViewModelComponent::class)
-class MainModule {
+@InstallIn(SingletonComponent::class)
+object MainModule {
 
     @Provides
-    fun resourcesProvider(@ApplicationContext context: Context) = ResourcesProvider(context)
+    fun provideIoDispatcher() : CoroutineDispatcher = Dispatchers.IO
 }

@@ -3,9 +3,13 @@ package com.apap.ctm.data.db
 import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.JsonParser
+import com.google.gson.reflect.TypeToken
+import org.joda.time.DateTime
+import java.lang.reflect.Type
+
 
 open class BaseConverter<T>(private val clazz: Class<T>) {
-    val gson = Gson()
+    private val gson = Gson()
 
     @TypeConverter
     fun toItemFromJson(valueInJson: String?): T = gson.fromJson(valueInJson, clazz)
@@ -15,7 +19,7 @@ open class BaseConverter<T>(private val clazz: Class<T>) {
 }
 
 open class BaseListConverter<T>(private val clazz: Class<T>) {
-    val gson = Gson()
+    private val gson = Gson()
 
     @TypeConverter
     fun toItemFromJson(valueInJson: String?): List<T>? = valueInJson?.let {
@@ -27,5 +31,21 @@ open class BaseListConverter<T>(private val clazz: Class<T>) {
     @TypeConverter
     fun fromItemToJson(value: List<T>?): String? = value?.let {
         gson.toJson(value)
+    }
+}
+
+open class DateTimeConverter {
+    private val gson = Gson()
+
+    @TypeConverter
+    fun stringToDate(data: String?): DateTime? {
+        val type: Type? = object : TypeToken<DateTime?>() {}.type
+
+        return gson.fromJson(data, type)
+    }
+
+    @TypeConverter
+    fun dateToString(dateTime: DateTime?): String? {
+        return gson.toJson(dateTime)
     }
 }

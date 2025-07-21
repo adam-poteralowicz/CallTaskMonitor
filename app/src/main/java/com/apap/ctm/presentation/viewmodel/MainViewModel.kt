@@ -1,9 +1,7 @@
 package com.apap.ctm.presentation.viewmodel
 
-import android.database.Cursor
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.apap.ctm.domain.usecase.FetchCallLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,9 +11,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor(
-    private val fetchCallLog: FetchCallLog
-) : ViewModel() {
+class MainViewModel @Inject constructor() : ViewModel() {
 
     private val _serverStartedFlow = MutableStateFlow(false)
     val serverStartedFlow = _serverStartedFlow.asStateFlow()
@@ -50,10 +46,5 @@ class MainViewModel @Inject constructor(
         } else {
             _showDialogFlow.emit(emptyList())
         }
-    }
-
-    fun onCallLogFetched(cursor: Cursor?) {
-        cursor ?: return
-        fetchCallLog.invoke(cursor)
     }
 }

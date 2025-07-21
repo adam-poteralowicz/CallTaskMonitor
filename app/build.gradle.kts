@@ -47,6 +47,7 @@ android {
     }
     kotlin {
         compilerOptions {
+            freeCompilerArgs = listOf("-XXLanguage:+PropertyParamAnnotationDefaultTargetMode")
             jvmTarget = JvmTarget.JVM_19
         }
     }
@@ -80,6 +81,8 @@ dependencies {
     implementation(libs.room.ktx)
     implementation(libs.room.runtime)
     kapt(libs.room.compiler)
+
+    implementation(libs.joda)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

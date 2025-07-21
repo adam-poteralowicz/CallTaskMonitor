@@ -7,15 +7,14 @@ import android.content.IntentFilter
 import android.content.ServiceConnection
 import android.os.Binder
 import android.os.IBinder
+import android.provider.ContactsContract
 import android.telephony.TelephonyManager
 import android.util.Log
 import com.apap.ctm.util.getLocalIPAddress
-import io.ktor.serialization.gson.gson
-import io.ktor.server.application.install
+import dagger.hilt.android.AndroidEntryPoint
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.netty.NettyApplicationEngine
-import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.netty.util.internal.logging.InternalLoggerFactory
 import io.netty.util.internal.logging.JdkLoggerFactory
 import kotlinx.coroutines.CoroutineScope
@@ -26,21 +25,34 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class HttpService @Inject constructor() : Service() {
+@AndroidEntryPoint
+class HttpService : Service() {
+
+    @Inject lateinit var callTaskController: CallTaskController
 
     private var server: NettyApplicationEngine? = null
+    private val cursor by lazy { contentResolver.query(ContactsContract.Data.CONTENT_URI, null, null, null, null) }
 
     private val callStatusBroadcastReceiver by lazy {
         val callback = object : CallStatusCallback {
             override fun onCallStarted(number: String) {
                 coroutineScope.launch {
+                    cursor?.let {
+                        callTaskController.startCall(it, number)
+                        it.close()
+                    }
                     Log.d("HttpService", "Call with $number started")
                 }
             }
 
             override fun onCallEnded(number: String) {
                 coroutineScope.launch {
+                    callTaskController.stopCall(number)
                     Log.d("HttpService", "Call with $number ended")
+                    cursor?.let {
+                        callTaskController.addLogEntry(it, number)
+                        it.close()
+                    }
                 }
             }
         }
@@ -66,8 +78,7 @@ class HttpService @Inject constructor() : Service() {
                 port = PORT,
                 host = localIP.ifBlank { DEFAULT_NETWORK_INTERFACE }
             ) {
-                install(ContentNegotiation) { gson {} }
-                callTaskController()
+                setUp(callTaskController)
             }
             server?.start(wait = false)
         }.start()
@@ -97,6 +108,10 @@ class HttpService @Inject constructor() : Service() {
         val callFilter = IntentFilter()
         callFilter.addAction(TelephonyManager.ACTION_PHONE_STATE_CHANGED)
         registerReceiver(callStatusBroadcastReceiver, callFilter)
+        coroutineScope.launch {
+            callTaskController.addService(name = "status", uri = "$localIP:$PORT/status")
+            callTaskController.addService(name = "log", uri = "$localIP:$PORT/log")
+        }
     }
 
     private class HttpServiceBinder : Binder() {
