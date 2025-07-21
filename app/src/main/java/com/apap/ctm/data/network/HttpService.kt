@@ -47,6 +47,8 @@ class HttpService @Inject constructor() : Service() {
         CallStatusBroadcastReceiver(callback)
     }
 
+    private val localIP by lazy { getLocalIPAddress(applicationContext) }
+
     private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
     private companion object {
@@ -62,12 +64,12 @@ class HttpService @Inject constructor() : Service() {
             server = embeddedServer(
                 factory = Netty,
                 port = PORT,
-                host = getLocalIPAddress(applicationContext).ifBlank { DEFAULT_NETWORK_INTERFACE }
+                host = localIP.ifBlank { DEFAULT_NETWORK_INTERFACE }
             ) {
                 install(ContentNegotiation) { gson {} }
                 callTaskController()
             }
-            server?.start(wait = true)
+            server?.start(wait = false)
         }.start()
     }
 
