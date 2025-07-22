@@ -4,7 +4,6 @@ import com.apap.ctm.data.db.MonitorStatusDao
 import com.apap.ctm.domain.model.MonitorStatus
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -17,9 +16,15 @@ class MonitorStatusRepositoryImpl @Inject constructor(
         dao.insert(status)
     }
 
-    override suspend fun deleteStatus(status: MonitorStatus) = withContext(dispatcher) {
-        dao.delete(status)
+    override suspend fun updateStatus(number: String, ongoing: Boolean) = withContext(dispatcher) {
+        dao.update(number, ongoing)
     }
 
-    override fun getStatus(): Flow<MonitorStatus> = dao.getStatus()
+    override suspend fun deleteStatus() = withContext(dispatcher) {
+        dao.delete()
+    }
+
+    override suspend fun getStatus(): MonitorStatus? = withContext(dispatcher) {
+        dao.getStatus()
+    }
 }

@@ -13,13 +13,19 @@ fun Application.setUp(controller: CallTaskController) {
     install(ContentNegotiation) { gson {} }
     routing {
         get("/") {
-            call.respond(controller.getServices())
+            controller.getServices()?.let {
+                call.respond(it)
+            } ?: call.respond("NO SERVICES ONLINE")
         }
         get("/status") {
-            call.respond(controller.getStatus())
+            controller.getStatus()?.let {
+                call.respond(it)
+            } ?: call.respond("NO CALL IN PROGRESS")
         }
         get("/log") {
-            call.respond(controller.getLog())
+            controller.getLog()?.let {
+                call.respond(it)
+            } ?: call.respond("NO LOGS AVAILABLE")
         }
     }
 }

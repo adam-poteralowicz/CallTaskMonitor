@@ -4,7 +4,6 @@ import com.apap.ctm.data.db.MonitorRootDao
 import com.apap.ctm.domain.model.MonitorRoot
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -17,9 +16,11 @@ class MonitorRootRepositoryImpl @Inject constructor(
         dao.insert(root)
     }
 
-    override suspend fun deleteRoot(root: MonitorRoot) = withContext(dispatcher) {
-        dao.delete(root)
+    override suspend fun deleteRoot() = withContext(dispatcher) {
+        dao.delete()
     }
 
-    override fun getRoot(): Flow<MonitorRoot> = dao.getRoot()
+    override suspend fun getRoot(): MonitorRoot? = withContext(dispatcher) {
+        dao.getRoot()
+    }
 }

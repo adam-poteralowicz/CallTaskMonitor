@@ -12,7 +12,6 @@ class GetNameFromContacts @Inject constructor() {
             val nameColumnIndex = cursor.getColumnIndex(ContactsContract.PhoneLookup.DISPLAY_NAME)
             return if (moveToFirst() && nameColumnIndex >= 0) {
                 val contactName = cursor.getString(nameColumnIndex)
-                cursor.close()
                 contactName
             } else {
                 ""

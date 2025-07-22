@@ -11,11 +11,10 @@ import com.apap.ctm.domain.model.MonitorRoot
 import com.apap.ctm.domain.model.MonitorService
 import com.apap.ctm.domain.model.MonitorStatus
 import com.apap.ctm.domain.usecase.GetNameFromContacts
-import kotlinx.coroutines.flow.last
+import com.apap.ctm.util.toDateTime
+import com.apap.ctm.util.toDateTimeString
 import org.joda.time.DateTime
 import javax.inject.Inject
-import kotlin.time.DurationUnit
-import kotlin.time.toDuration
 
 class CallTaskController @Inject constructor(
     private val logRepository: MonitorLogRepository,
@@ -25,9 +24,10 @@ class CallTaskController @Inject constructor(
 ) {
 
     suspend fun startCall(cursor: Cursor, number: String) {
+        val now = DateTime.now().toDateTimeString()
         val status = MonitorStatus(
-            start = DateTime.now(),
-            stop = DateTime.now(),
+            start = now,
+            stop = now,
             ongoing = true,
             number = number,
             name = getNameFromContacts.invoke(cursor)
@@ -36,51 +36,72 @@ class CallTaskController @Inject constructor(
         statusRepository.insertStatus(status)
     }
 
-    suspend fun stopCall(number: String) {
-        val statusFromDb = statusRepository.getStatus().last()
-        val duration = (statusFromDb.stop.millis - statusFromDb.start.millis)
-            .toDuration(DurationUnit.SECONDS).inWholeSeconds.toInt()
-        val status = statusFromDb.copy(ongoing = false, stop = DateTime.now(), duration = duration)
-        Log.d("CallTaskController::stopCall", "number: ${status.number}")
-        statusRepository.insertStatus(status)
+    suspend fun stopCall() {
+        with(statusRepository.getStatus()) {
+            this ?: return@with
+            val now = DateTime.now()
+            val start = start.toDateTime().millis
+            val stop = now.millis
+            val duration = ((stop - start)/1000).toInt()
+            val status = copy(
+                ongoing = false,
+                stop = now.toDateTimeString(),
+                duration = duration
+            )
+            Log.d("CallTaskController::stopCall", "name: $name, number: ${status.number}, duration: ${status.duration}")
+            statusRepository.insertStatus(status)
+        }
     }
 
-    suspend fun addLogEntry(cursor: Cursor, number: String) {
-        val logFromDb = logRepository.getAllLogs().last()[0]
-        val log = if (logFromDb.entries?.isEmpty() == true) {
-            MonitorLog()
-        } else logFromDb
+    suspend fun addLogEntry(cursor: Cursor) {
+        val status = statusRepository.getStatus() ?: return
+        val log = logRepository.getLog() ?: MonitorLog()
+
         val logEntry = MonitorLogEntry(
-            beginning = DateTime.now(),
-            duration = statusRepository.getStatus().last().duration.toString(),
-            number = number,
+            beginning = status.start,
+            duration = status.duration,
+            number = status.number,
             name = getNameFromContacts.invoke(cursor),
-            timesQueried = (log.entries?.find { it.number == number }?.timesQueried?.plus(1)) ?: 1
+            timesQueried = 0 // number of times log entry queried via API - initially it's zero
         )
-        val updatedEntries = log.entries?.toMutableList().also {
-            it?.plusAssign(logEntry)
+        val entries = if (log.entries?.isEmpty() == true) {
+            listOf(logEntry)
+        } else {
+            log.copy().entries?.toMutableList()?.plus(logEntry)
         }
+        logRepository.insertLog(log.copy(entries = entries))
         Log.d("CallTaskController::addLogEntry", "LogEntry::$logEntry")
-        logRepository.insertLog(log.copy(entries = updatedEntries))
     }
 
     suspend fun addService(name: String, uri: String) {
-        val rootFromDb = rootRepository.getRoot().last()
-        val root = if (rootFromDb.services?.isEmpty() == true) {
-            MonitorRoot(start = DateTime.now())
-        } else rootFromDb
         val service = MonitorService(name = name, uri = uri)
-        val updatedServices = root.services?.toMutableList().also {
-            it?.plusAssign(service)
+        val rootFromDb = rootRepository.getRoot()
+        rootFromDb?.let {
+            val services = if (it.services?.isEmpty() == true) {
+                listOf(service)
+            } else {
+                it.copy().services?.toMutableList()?.plus(service)
+            }
+            rootRepository.insertRoot(it.copy(services = services))
+        } ?: run {
+            val root = MonitorRoot(
+                start = DateTime.now().toDateTimeString(),
+                services = listOf(service)
+            )
+            rootRepository.insertRoot(root)
         }
         Log.d("CallTaskController::addService", "Service::$name @ $uri")
-        rootRepository.insertRoot(root.copy(services = updatedServices))
     }
 
-    fun getServices() = rootRepository.getRoot()
+    suspend fun getServices() = rootRepository.getRoot()
 
-    fun getStatus() = statusRepository.getStatus()
+    suspend fun getStatus() = statusRepository.getStatus()
 
-    fun getLog() = logRepository.getAllLogs()
+    suspend fun getLog() = logRepository.getLog()
 
+    suspend fun clearAllTables() {
+        rootRepository.deleteRoot()
+        logRepository.deleteLog()
+        statusRepository.deleteStatus()
+    }
 }

@@ -9,7 +9,7 @@ import android.os.Binder
 import android.os.IBinder
 import android.provider.ContactsContract
 import android.telephony.TelephonyManager
-import android.util.Log
+import com.apap.ctm.R
 import com.apap.ctm.util.getLocalIPAddress
 import dagger.hilt.android.AndroidEntryPoint
 import io.ktor.server.engine.embeddedServer
@@ -39,19 +39,15 @@ class HttpService : Service() {
                 coroutineScope.launch {
                     cursor?.let {
                         callTaskController.startCall(it, number)
-                        it.close()
                     }
-                    Log.d("HttpService", "Call with $number started")
                 }
             }
 
             override fun onCallEnded(number: String) {
                 coroutineScope.launch {
-                    callTaskController.stopCall(number)
-                    Log.d("HttpService", "Call with $number ended")
+                    callTaskController.stopCall()
                     cursor?.let {
-                        callTaskController.addLogEntry(it, number)
-                        it.close()
+                        callTaskController.addLogEntry(it)
                     }
                 }
             }
@@ -84,11 +80,19 @@ class HttpService : Service() {
         }.start()
     }
 
+    override fun onDestroy() {
+        cursor?.close()
+        super.onDestroy()
+    }
+
     override fun onBind(intent: Intent?): IBinder? = HttpServiceBinder()
 
     override fun onUnbind(intent: Intent?): Boolean {
         unregisterReceiver(callStatusBroadcastReceiver)
         server?.stop(0,0 )
+        coroutineScope.launch {
+            callTaskController.clearAllTables()
+        }
         return false
     }
 
@@ -109,8 +113,10 @@ class HttpService : Service() {
         callFilter.addAction(TelephonyManager.ACTION_PHONE_STATE_CHANGED)
         registerReceiver(callStatusBroadcastReceiver, callFilter)
         coroutineScope.launch {
-            callTaskController.addService(name = "status", uri = "$localIP:$PORT/status")
-            callTaskController.addService(name = "log", uri = "$localIP:$PORT/log")
+            val log = getString(R.string.log)
+            val status = getString(R.string.status)
+            callTaskController.addService(name = status, uri = "$localIP:$PORT/$status")
+            callTaskController.addService(name = log, uri = "$localIP:$PORT/$log")
         }
     }
 
