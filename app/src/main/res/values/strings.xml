@@ -8,4 +8,6 @@
     <string name="permission_name">%s permission</string>
     <string name="alert_dialog_positive_button">OK</string>
     <string name="call_log_duration">: %s min %s s</string>
+    <string name="log">log</string>
+    <string name="status">status</string>
 </resources>

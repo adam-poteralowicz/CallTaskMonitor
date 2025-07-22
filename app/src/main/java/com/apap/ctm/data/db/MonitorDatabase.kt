@@ -17,7 +17,7 @@ import com.apap.ctm.domain.model.MonitorStatus
         MonitorRoot::class,
         MonitorStatus::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = true
 )
 @TypeConverters(MonitorLogEntryConverter::class, MonitorServiceConverter::class)

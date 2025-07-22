@@ -17,11 +17,9 @@ class CallStatusBroadcastReceiver(
     override fun onReceive(context: Context?, intent: Intent?) {
         intent ?: return
         if (intent.action == TelephonyManager.ACTION_PHONE_STATE_CHANGED) {
-            val number = intent.extras?.getString(TelephonyManager.EXTRA_INCOMING_NUMBER)
-            val status = intent.extras?.getString(TelephonyManager.EXTRA_STATE)
-            if (!number.isNullOrBlank() && !status.isNullOrBlank()) {
-                broadcastCallStatus(status, number)
-            }
+            val number = intent.extras?.getString(TelephonyManager.EXTRA_INCOMING_NUMBER) ?: return
+            val status = intent.extras?.getString(TelephonyManager.EXTRA_STATE) ?: return
+            broadcastCallStatus(status, number)
         }
     }
 
