@@ -93,6 +93,10 @@ class CallTaskController @Inject constructor(
         Log.d("CallTaskController::addService", "Service::$name @ $uri")
     }
 
+    suspend fun insertLog(log: MonitorLog) {
+        logRepository.insertLog(log)
+    }
+
     suspend fun getServices() = rootRepository.getRoot()
 
     suspend fun getStatus() = statusRepository.getStatus()
