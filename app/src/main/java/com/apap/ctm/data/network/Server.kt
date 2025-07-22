@@ -1,11 +1,16 @@
 package com.apap.ctm.data.network
 
+import com.apap.ctm.domain.model.MonitorLog
+import com.apap.ctm.domain.model.MonitorLogEntry
+import io.ktor.http.ContentType
+import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.gson.gson
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
 import io.ktor.server.application.install
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.response.respond
+import io.ktor.server.response.respondText
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
 
@@ -14,18 +19,46 @@ fun Application.setUp(controller: CallTaskController) {
     routing {
         get("/") {
             controller.getServices()?.let {
-                call.respond(it)
-            } ?: call.respond("NO SERVICES ONLINE")
+                call.respond(HttpStatusCode.OK, it)
+            } ?: call.respondText(
+                contentType = ContentType.parse("text/html"),
+                text = """
+                    <h3>NO SERVICES AVAILABLE</h3>
+                """.trimIndent()
+            )
         }
         get("/status") {
             controller.getStatus()?.let {
-                call.respond(it)
-            } ?: call.respond("NO CALL IN PROGRESS")
+                call.respond(HttpStatusCode.OK, it)
+            } ?: call.respondText(
+                contentType = ContentType.parse("text/html"),
+                text = """
+                    <h3>NO ONGOING CALL</h3>
+                """.trimIndent()
+            )
         }
         get("/log") {
-            controller.getLog()?.let {
-                call.respond(it)
-            } ?: call.respond("NO LOGS AVAILABLE")
+            controller.getLog()?.let { result ->
+                val updatedLog = updateTimesQueried(result)
+                controller.insertLog(updatedLog)
+                call.respond(HttpStatusCode.OK, updatedLog)
+            } ?: call.respondText(
+                contentType = ContentType.parse("text/html"),
+                text = """
+                    <h3>NO LOGS AVAILABLE</h3>
+                """.trimIndent()
+            )
         }
     }
+}
+
+private fun updateTimesQueried(result: MonitorLog): MonitorLog {
+    val log = result.copy()
+    val entries = mutableListOf<MonitorLogEntry>()
+    result.entries?.forEach { entry ->
+        entry.timesQueried?.let {
+            entries.add(entry.copy(timesQueried = it.plus(1)))
+        } ?: entries.add(entry)
+    }
+    return log.copy(entries = entries)
 }
