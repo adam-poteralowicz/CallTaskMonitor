@@ -1,37 +1,45 @@
 package com.apap.ctm.presentation.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.apap.ctm.data.repository.MonitorLogRepository
+import com.apap.ctm.domain.model.MonitorLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor() : ViewModel() {
+class MainViewModel @Inject constructor(logRepository: MonitorLogRepository) : ViewModel() {
 
-    private val _serverStartedFlow = MutableStateFlow(false)
-    val serverStartedFlow = _serverStartedFlow.asStateFlow()
+    private val _state = MutableStateFlow(MainViewState())
+    val state = _state.asStateFlow()
 
     private val _toggleServerFlow = MutableSharedFlow<Boolean>()
     val toggleServerFlow = _toggleServerFlow.asSharedFlow()
 
-    private val _showDialogFlow = MutableStateFlow<List<String>>(emptyList())
-    val showDialogFlow = _showDialogFlow.asStateFlow()
+    val log: StateFlow<MonitorLog?> = logRepository.getLogFlow()
+        .catch { exception -> exception.localizedMessage?.let { Log.e(javaClass.simpleName, it) } }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, MonitorLog())
 
     fun onServerToggled(shouldStart: Boolean) = viewModelScope.launch {
         _toggleServerFlow.emit(shouldStart)
     }
 
     fun onServerStarted() = viewModelScope.launch {
-        _serverStartedFlow.emit(true)
+        _state.emit(_state.value.copy(isServerStarted = true))
     }
 
     fun onServerStopped() = viewModelScope.launch {
-        _serverStartedFlow.emit(false)
+        _state.emit(_state.value.copy(isServerStarted = false))
     }
 
     fun onPermissionsNotGranted(permissions: List<String>) = viewModelScope.launch {
@@ -42,9 +50,9 @@ class MainViewModel @Inject constructor() : ViewModel() {
                 "android.permission.READ_PHONE_STATE" -> "READ PHONE STATE"
                 else -> ""
             }
-            _showDialogFlow.emit(listOf(permission))
+            _state.emit(_state.value.copy(showPermissionDialog = listOf(permission)))
         } else {
-            _showDialogFlow.emit(emptyList())
+            _state.emit(_state.value.copy(showPermissionDialog = emptyList()))
         }
     }
 }

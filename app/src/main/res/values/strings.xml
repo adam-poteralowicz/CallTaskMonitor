@@ -1,13 +1,14 @@
 <resources>
     <string name="app_name">CallTaskMonitor</string>
     <string name="localhost">127.0.0.1</string>
-    <string name="server_on">Server ON</string>
-    <string name="server_off">Server OFF</string>
+    <string name="server_on">Turn server ON</string>
+    <string name="server_off">Turn server OFF</string>
+    <string name="server_details">HTTP Server at %s:%s</string>
+    <string name="server_log_empty_state_msg">There are no logs to display</string>
     <string name="alert_dialog_title">Permission needed</string>
     <string name="alert_dialog_msg">Server won\'t function properly without %s. Consider granting permission in app settings.</string>
     <string name="permission_name">%s permission</string>
     <string name="alert_dialog_positive_button">OK</string>
-    <string name="call_log_duration">: %s min %s s</string>
     <string name="log">log</string>
     <string name="status">status</string>
 </resources>
