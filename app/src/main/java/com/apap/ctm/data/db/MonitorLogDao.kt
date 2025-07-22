@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.apap.ctm.domain.model.MonitorLog
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MonitorLogDao {
@@ -17,4 +18,7 @@ interface MonitorLogDao {
 
     @Query("SELECT * FROM monitorLog")
     suspend fun getLog(): MonitorLog
+
+    @Query("SELECT * FROM monitorlog")
+    fun getLogFlow(): Flow<MonitorLog?>
 }
