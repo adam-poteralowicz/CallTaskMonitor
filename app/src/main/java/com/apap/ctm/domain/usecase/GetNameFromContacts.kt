@@ -6,16 +6,14 @@ import javax.inject.Inject
 
 class GetNameFromContacts @Inject constructor() {
 
-    operator fun invoke(cursor: Cursor) : String {
+    private companion object {
+        const val UNKNOWN = "<UNKNOWN>"
+    }
 
-        with(cursor) {
-            val nameColumnIndex = cursor.getColumnIndex(ContactsContract.PhoneLookup.DISPLAY_NAME)
-            return if (moveToFirst() && nameColumnIndex >= 0) {
-                val contactName = cursor.getString(nameColumnIndex)
-                contactName
-            } else {
-                ""
-            }
-        }
+    operator fun invoke(cursor: Cursor) : String {
+        val nameColumnIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)
+        return if (cursor.moveToFirst()) {
+            cursor.getString(nameColumnIndex)
+        } else UNKNOWN
     }
 }
