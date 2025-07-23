@@ -5,9 +5,11 @@ import android.content.ComponentName
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.ServiceConnection
+import android.database.Cursor
+import android.net.Uri
 import android.os.Binder
 import android.os.IBinder
-import android.provider.ContactsContract
+import android.provider.ContactsContract.PhoneLookup
 import android.telephony.TelephonyManager
 import com.apap.ctm.R
 import com.apap.ctm.util.getLocalIPAddress
@@ -24,6 +26,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 
+
 @Singleton
 @AndroidEntryPoint
 class HttpService : Service() {
@@ -31,12 +34,13 @@ class HttpService : Service() {
     @Inject lateinit var callTaskController: CallTaskController
 
     private var server: NettyApplicationEngine? = null
-    private val cursor by lazy { contentResolver.query(ContactsContract.Data.CONTENT_URI, null, null, null, null) }
+    private var cursor: Cursor? = null
 
     private val callStatusBroadcastReceiver by lazy {
         val callback = object : CallStatusCallback {
             override fun onCallStarted(number: String) {
                 coroutineScope.launch {
+                    cursor = numberCursor(number)
                     cursor?.let {
                         callTaskController.startCall(it, number)
                     }
@@ -118,6 +122,15 @@ class HttpService : Service() {
             callTaskController.addService(name = status, uri = "$localIP:$PORT/$status")
             callTaskController.addService(name = log, uri = "$localIP:$PORT/$log")
         }
+    }
+
+    private fun numberCursor(phoneNumber: String) : Cursor? {
+        val lookupUri = Uri.withAppendedPath(
+            PhoneLookup.CONTENT_FILTER_URI,
+            Uri.encode(phoneNumber)
+        )
+        val projection = arrayOf(PhoneLookup.DISPLAY_NAME)
+        return contentResolver.query(lookupUri, projection, null, null, null)
     }
 
     private class HttpServiceBinder : Binder() {
