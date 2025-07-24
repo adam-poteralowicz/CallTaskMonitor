@@ -1,7 +1,7 @@
 package com.apap.ctm.data.network
 
-import com.apap.ctm.domain.model.MonitorLogEntity
-import com.apap.ctm.domain.model.MonitorLogEntryEntity
+import com.apap.ctm.data.model.MonitorLogEntity
+import com.apap.ctm.data.model.MonitorLogEntryEntity
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.gson.gson

@@ -1,7 +1,7 @@
 package com.apap.ctm.data.repository
 
 import com.apap.ctm.data.db.MonitorLogDao
-import com.apap.ctm.domain.model.MonitorLogEntity
+import com.apap.ctm.data.model.MonitorLogEntity
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow

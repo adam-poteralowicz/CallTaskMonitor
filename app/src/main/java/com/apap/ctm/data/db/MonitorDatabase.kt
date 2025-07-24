@@ -5,11 +5,11 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.apap.ctm.domain.model.MonitorLogEntity
-import com.apap.ctm.domain.model.MonitorLogEntryConverter
-import com.apap.ctm.domain.model.MonitorRootEntity
-import com.apap.ctm.domain.model.MonitorServiceConverter
-import com.apap.ctm.domain.model.MonitorStatusEntity
+import com.apap.ctm.data.model.MonitorLogEntity
+import com.apap.ctm.data.model.MonitorLogEntryConverter
+import com.apap.ctm.data.model.MonitorRootEntity
+import com.apap.ctm.data.model.MonitorServiceConverter
+import com.apap.ctm.data.model.MonitorStatusEntity
 
 @Database(
     entities = [

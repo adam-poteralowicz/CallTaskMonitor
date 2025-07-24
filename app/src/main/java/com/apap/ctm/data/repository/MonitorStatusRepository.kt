@@ -1,6 +1,6 @@
 package com.apap.ctm.data.repository
 
-import com.apap.ctm.domain.model.MonitorStatusEntity
+import com.apap.ctm.data.model.MonitorStatusEntity
 
 interface MonitorStatusRepository {
     suspend fun insertStatus(status: MonitorStatusEntity)

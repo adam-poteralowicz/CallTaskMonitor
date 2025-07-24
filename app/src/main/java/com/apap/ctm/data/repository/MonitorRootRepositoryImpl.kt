@@ -1,7 +1,7 @@
 package com.apap.ctm.data.repository
 
 import com.apap.ctm.data.db.MonitorRootDao
-import com.apap.ctm.domain.model.MonitorRootEntity
+import com.apap.ctm.data.model.MonitorRootEntity
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

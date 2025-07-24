@@ -1,6 +1,6 @@
 package com.apap.ctm.data.repository
 
-import com.apap.ctm.domain.model.MonitorLogEntity
+import com.apap.ctm.data.model.MonitorLogEntity
 import kotlinx.coroutines.flow.Flow
 
 interface MonitorLogRepository {

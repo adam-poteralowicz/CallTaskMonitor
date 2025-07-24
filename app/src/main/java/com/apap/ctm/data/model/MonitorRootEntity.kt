@@ -1,4 +1,4 @@
-package com.apap.ctm.domain.model
+package com.apap.ctm.data.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

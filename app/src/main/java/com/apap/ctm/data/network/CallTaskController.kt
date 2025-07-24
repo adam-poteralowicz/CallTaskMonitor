@@ -5,11 +5,11 @@ import android.util.Log
 import com.apap.ctm.data.repository.MonitorLogRepository
 import com.apap.ctm.data.repository.MonitorRootRepository
 import com.apap.ctm.data.repository.MonitorStatusRepository
-import com.apap.ctm.domain.model.MonitorLogEntity
-import com.apap.ctm.domain.model.MonitorLogEntryEntity
-import com.apap.ctm.domain.model.MonitorRootEntity
-import com.apap.ctm.domain.model.MonitorServiceEntity
-import com.apap.ctm.domain.model.MonitorStatusEntity
+import com.apap.ctm.data.model.MonitorLogEntity
+import com.apap.ctm.data.model.MonitorLogEntryEntity
+import com.apap.ctm.data.model.MonitorRootEntity
+import com.apap.ctm.data.model.MonitorServiceEntity
+import com.apap.ctm.data.model.MonitorStatusEntity
 import com.apap.ctm.domain.usecase.GetNameFromContacts
 import com.apap.ctm.util.toDateTime
 import com.apap.ctm.util.toDateTimeString
