@@ -5,17 +5,17 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.apap.ctm.data.db.BaseListConverter
 
-class MonitorServiceConverter : BaseListConverter<MonitorService>(MonitorService::class.java)
+class MonitorServiceConverter : BaseListConverter<MonitorServiceEntity>(MonitorServiceEntity::class.java)
 
 @Entity
-data class MonitorRoot(
+data class MonitorRootEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     @ColumnInfo("start") val start: String?,
-    @ColumnInfo("services") val services: List<MonitorService>? = emptyList()
+    @ColumnInfo("services") val services: List<MonitorServiceEntity>? = emptyList()
 )
 
 @Entity
-data class MonitorService(
+data class MonitorServiceEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     @ColumnInfo(name = "name") val name: String?,
     @ColumnInfo(name = "uri") val uri: String?

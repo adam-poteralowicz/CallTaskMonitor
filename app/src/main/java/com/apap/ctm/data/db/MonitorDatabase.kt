@@ -5,19 +5,19 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.apap.ctm.domain.model.MonitorLog
+import com.apap.ctm.domain.model.MonitorLogEntity
 import com.apap.ctm.domain.model.MonitorLogEntryConverter
-import com.apap.ctm.domain.model.MonitorRoot
+import com.apap.ctm.domain.model.MonitorRootEntity
 import com.apap.ctm.domain.model.MonitorServiceConverter
-import com.apap.ctm.domain.model.MonitorStatus
+import com.apap.ctm.domain.model.MonitorStatusEntity
 
 @Database(
     entities = [
-        MonitorLog::class,
-        MonitorRoot::class,
-        MonitorStatus::class
+        MonitorLogEntity::class,
+        MonitorRootEntity::class,
+        MonitorStatusEntity::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = true
 )
 @TypeConverters(MonitorLogEntryConverter::class, MonitorServiceConverter::class)
@@ -35,6 +35,7 @@ abstract class MonitorDatabase : RoomDatabase() {
 
         private fun createDatabase(context: Context) : MonitorDatabase {
             val databaseBuilder = Room.databaseBuilder(context, MonitorDatabase::class.java, "monitor.db")
+                .fallbackToDestructiveMigration(dropAllTables = true)
             return databaseBuilder.build()
         }
     }

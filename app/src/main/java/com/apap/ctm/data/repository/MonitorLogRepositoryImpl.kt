@@ -1,7 +1,7 @@
 package com.apap.ctm.data.repository
 
 import com.apap.ctm.data.db.MonitorLogDao
-import com.apap.ctm.domain.model.MonitorLog
+import com.apap.ctm.domain.model.MonitorLogEntity
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -13,7 +13,7 @@ class MonitorLogRepositoryImpl @Inject constructor(
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : MonitorLogRepository {
 
-    override suspend fun insertLog(log: MonitorLog) = withContext(dispatcher) {
+    override suspend fun insertLog(log: MonitorLogEntity) = withContext(dispatcher) {
         dao.insert(log)
     }
 
@@ -21,9 +21,9 @@ class MonitorLogRepositoryImpl @Inject constructor(
         dao.delete()
     }
 
-    override suspend fun getLog() : MonitorLog? = withContext(dispatcher) {
+    override suspend fun getLog() : MonitorLogEntity? = withContext(dispatcher) {
         dao.getLog()
     }
 
-    override fun getLogFlow() : Flow<MonitorLog?> = dao.getLogFlow()
+    override fun getLogFlow() : Flow<MonitorLogEntity?> = dao.getLogFlow()
 }

@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-data class MonitorStatus(
+data class MonitorStatusEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     @ColumnInfo(name = "start") val start: String,
     @ColumnInfo(name = "stop") val stop: String,

@@ -1,7 +1,6 @@
 package com.apap.ctm.di
 
 import android.content.Context
-import androidx.room.Room
 import com.apap.ctm.data.db.MonitorDatabase
 import com.apap.ctm.data.db.MonitorLogDao
 import com.apap.ctm.data.db.MonitorRootDao
@@ -30,9 +29,7 @@ abstract class DataModule {
         @Provides
         @Singleton
         fun provideDatabase(@ApplicationContext context: Context): MonitorDatabase {
-            return Room.databaseBuilder(context, MonitorDatabase::class.java, "monitor.db")
-                .fallbackToDestructiveMigration(dropAllTables = true)
-                .build()
+            return MonitorDatabase.getInstance(context)
         }
 
         @Provides

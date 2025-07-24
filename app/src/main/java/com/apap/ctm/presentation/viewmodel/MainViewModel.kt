@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.apap.ctm.data.repository.MonitorLogRepository
-import com.apap.ctm.domain.model.MonitorLog
+import com.apap.ctm.domain.model.MonitorLogEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,9 +26,9 @@ class MainViewModel @Inject constructor(logRepository: MonitorLogRepository) : V
     private val _toggleServerFlow = MutableSharedFlow<Boolean>()
     val toggleServerFlow = _toggleServerFlow.asSharedFlow()
 
-    val log: StateFlow<MonitorLog?> = logRepository.getLogFlow()
+    val log: StateFlow<MonitorLogEntity?> = logRepository.getLogFlow()
         .catch { exception -> exception.localizedMessage?.let { Log.e(javaClass.simpleName, it) } }
-        .stateIn(viewModelScope, SharingStarted.Eagerly, MonitorLog())
+        .stateIn(viewModelScope, SharingStarted.Eagerly, MonitorLogEntity())
 
     fun onServerToggled(shouldStart: Boolean) = viewModelScope.launch {
         _toggleServerFlow.emit(shouldStart)

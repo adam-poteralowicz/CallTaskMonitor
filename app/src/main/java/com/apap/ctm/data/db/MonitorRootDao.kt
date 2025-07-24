@@ -4,17 +4,17 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.apap.ctm.domain.model.MonitorRoot
+import com.apap.ctm.domain.model.MonitorRootEntity
 
 @Dao
 interface MonitorRootDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(root: MonitorRoot)
+    suspend fun insert(root: MonitorRootEntity)
 
-    @Query("DELETE FROM monitorRoot")
+    @Query("DELETE FROM monitorRootEntity")
     suspend fun delete()
 
-    @Query("SELECT * FROM monitorRoot ORDER BY id DESC LIMIT 1")
-    suspend fun getRoot(): MonitorRoot?
+    @Query("SELECT * FROM monitorRootEntity ORDER BY id DESC LIMIT 1")
+    suspend fun getRoot(): MonitorRootEntity?
 }

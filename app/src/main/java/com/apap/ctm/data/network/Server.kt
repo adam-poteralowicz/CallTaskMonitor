@@ -1,7 +1,7 @@
 package com.apap.ctm.data.network
 
-import com.apap.ctm.domain.model.MonitorLog
-import com.apap.ctm.domain.model.MonitorLogEntry
+import com.apap.ctm.domain.model.MonitorLogEntity
+import com.apap.ctm.domain.model.MonitorLogEntryEntity
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.gson.gson
@@ -52,9 +52,9 @@ fun Application.setUp(controller: CallTaskController) {
     }
 }
 
-private fun updateTimesQueried(result: MonitorLog): MonitorLog {
+private fun updateTimesQueried(result: MonitorLogEntity): MonitorLogEntity {
     val log = result.copy()
-    val entries = mutableListOf<MonitorLogEntry>()
+    val entries = mutableListOf<MonitorLogEntryEntity>()
     result.entries?.forEach { entry ->
         entry.timesQueried?.let {
             entries.add(entry.copy(timesQueried = it.plus(1)))

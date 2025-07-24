@@ -1,7 +1,7 @@
 package com.apap.ctm.data.repository
 
 import com.apap.ctm.data.db.MonitorStatusDao
-import com.apap.ctm.domain.model.MonitorStatus
+import com.apap.ctm.domain.model.MonitorStatusEntity
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -12,7 +12,7 @@ class MonitorStatusRepositoryImpl @Inject constructor(
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : MonitorStatusRepository {
 
-    override suspend fun insertStatus(status: MonitorStatus) = withContext(dispatcher) {
+    override suspend fun insertStatus(status: MonitorStatusEntity) = withContext(dispatcher) {
         dao.insert(status)
     }
 
@@ -24,7 +24,7 @@ class MonitorStatusRepositoryImpl @Inject constructor(
         dao.delete()
     }
 
-    override suspend fun getStatus(): MonitorStatus? = withContext(dispatcher) {
+    override suspend fun getStatus(): MonitorStatusEntity? = withContext(dispatcher) {
         dao.getStatus()
     }
 }

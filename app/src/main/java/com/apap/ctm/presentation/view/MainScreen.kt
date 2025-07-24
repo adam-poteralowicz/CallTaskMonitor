@@ -30,7 +30,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.apap.ctm.R
-import com.apap.ctm.domain.model.MonitorLogEntry
+import com.apap.ctm.domain.model.MonitorLogEntryEntity
 import com.apap.ctm.presentation.viewmodel.MainViewModel
 import com.apap.ctm.resources.DIVIDER
 import com.apap.ctm.resources.SERVER_DETAILS_TOP_PADDING
@@ -123,7 +123,7 @@ fun ServerButton(
 }
 
 @Composable
-fun ServerLog(entries: List<MonitorLogEntry>) {
+fun ServerLog(entries: List<MonitorLogEntryEntity>) {
     LazyColumn(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
         items(entries) { entry ->
             HorizontalDivider(thickness = DIVIDER)

@@ -4,21 +4,21 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.apap.ctm.domain.model.MonitorLog
+import com.apap.ctm.domain.model.MonitorLogEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MonitorLogDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(log: MonitorLog)
+    suspend fun insert(log: MonitorLogEntity)
 
-    @Query("DELETE FROM monitorlog")
+    @Query("DELETE FROM monitorLogEntity")
     suspend fun delete()
 
-    @Query("SELECT * FROM monitorLog")
-    suspend fun getLog(): MonitorLog
+    @Query("SELECT * FROM monitorLogEntity")
+    suspend fun getLog(): MonitorLogEntity
 
-    @Query("SELECT * FROM monitorlog")
-    fun getLogFlow(): Flow<MonitorLog?>
+    @Query("SELECT * FROM monitorlogEntity")
+    fun getLogFlow(): Flow<MonitorLogEntity?>
 }

@@ -5,11 +5,11 @@ import android.util.Log
 import com.apap.ctm.data.repository.MonitorLogRepository
 import com.apap.ctm.data.repository.MonitorRootRepository
 import com.apap.ctm.data.repository.MonitorStatusRepository
-import com.apap.ctm.domain.model.MonitorLog
-import com.apap.ctm.domain.model.MonitorLogEntry
-import com.apap.ctm.domain.model.MonitorRoot
-import com.apap.ctm.domain.model.MonitorService
-import com.apap.ctm.domain.model.MonitorStatus
+import com.apap.ctm.domain.model.MonitorLogEntity
+import com.apap.ctm.domain.model.MonitorLogEntryEntity
+import com.apap.ctm.domain.model.MonitorRootEntity
+import com.apap.ctm.domain.model.MonitorServiceEntity
+import com.apap.ctm.domain.model.MonitorStatusEntity
 import com.apap.ctm.domain.usecase.GetNameFromContacts
 import com.apap.ctm.util.toDateTime
 import com.apap.ctm.util.toDateTimeString
@@ -25,7 +25,7 @@ class CallTaskController @Inject constructor(
 
     suspend fun startCall(cursor: Cursor, number: String) {
         val now = DateTime.now().toDateTimeString()
-        val status = MonitorStatus(
+        val status = MonitorStatusEntity(
             start = now,
             stop = now,
             ongoing = true,
@@ -55,9 +55,9 @@ class CallTaskController @Inject constructor(
 
     suspend fun addLogEntry(cursor: Cursor) {
         val status = statusRepository.getStatus() ?: return
-        val log = logRepository.getLog() ?: MonitorLog()
+        val log = logRepository.getLog() ?: MonitorLogEntity()
 
-        val logEntry = MonitorLogEntry(
+        val logEntry = MonitorLogEntryEntity(
             beginning = status.start,
             duration = status.duration,
             number = status.number,
@@ -74,7 +74,7 @@ class CallTaskController @Inject constructor(
     }
 
     suspend fun addService(name: String, uri: String) {
-        val service = MonitorService(name = name, uri = uri)
+        val service = MonitorServiceEntity(name = name, uri = uri)
         val rootFromDb = rootRepository.getRoot()
         rootFromDb?.let {
             val services = if (it.services?.isEmpty() == true) {
@@ -84,7 +84,7 @@ class CallTaskController @Inject constructor(
             }
             rootRepository.insertRoot(it.copy(services = services))
         } ?: run {
-            val root = MonitorRoot(
+            val root = MonitorRootEntity(
                 start = DateTime.now().toDateTimeString(),
                 services = listOf(service)
             )
@@ -93,7 +93,7 @@ class CallTaskController @Inject constructor(
         Log.d("CallTaskController::addService", "Service::$name @ $uri")
     }
 
-    suspend fun insertLog(log: MonitorLog) {
+    suspend fun insertLog(log: MonitorLogEntity) {
         logRepository.insertLog(log)
     }
 

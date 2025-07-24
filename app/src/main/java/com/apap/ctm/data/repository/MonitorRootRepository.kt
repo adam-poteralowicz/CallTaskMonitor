@@ -1,9 +1,9 @@
 package com.apap.ctm.data.repository
 
-import com.apap.ctm.domain.model.MonitorRoot
+import com.apap.ctm.domain.model.MonitorRootEntity
 
 interface MonitorRootRepository {
-    suspend fun insertRoot(root: MonitorRoot)
+    suspend fun insertRoot(root: MonitorRootEntity)
     suspend fun deleteRoot()
-    suspend fun getRoot(): MonitorRoot?
+    suspend fun getRoot(): MonitorRootEntity?
 }
