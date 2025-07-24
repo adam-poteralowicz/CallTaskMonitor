@@ -75,20 +75,16 @@ class CallTaskController @Inject constructor(
         logRepository.insertLogEntry(logEntry)
     }
 
-    suspend fun addService(name: String, uri: String) {
-        val service = MonitorService(name = name, uri = uri)
+    suspend fun addServices(services: List<MonitorService>) {
         val rootFromDb = rootRepository.getRoot()
         rootFromDb?.let {
-            val services = if (it.services.isEmpty()) {
-                listOf(service)
-            } else {
-                it.copy().services.toMutableList().plus(service)
+            if (it.services.isEmpty()) {
+                rootRepository.insertRoot(it.copy(services = services))
             }
-            rootRepository.insertRoot(it.copy(services = services))
         } ?: run {
             val root = MonitorRoot(
                 start = DateTime.now().toDateTimeString(),
-                services = listOf(service)
+                services = services
             )
             rootRepository.insertRoot(root)
         }
