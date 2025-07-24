@@ -11,16 +11,14 @@ import org.joda.time.Instant
 import java.security.SecureRandom
 import java.util.UUID
 
-private fun randomBoolean() = SecureRandom().nextBoolean()
-private fun randomInt() = SecureRandom().nextInt()
-private fun randomLong() = SecureRandom().nextLong()
-private fun randomNumber() = (1..9).map { randomInt() }
-private fun randomString() = UUID.randomUUID().toString()
-private fun randomDateTime() = DateTime(Instant.ofEpochMilli(randomLong()))
-
+fun randomInt() = SecureRandom().nextInt()
+fun randomNumber() = (1..9).map { randomInt() }
+fun randomString() = UUID.randomUUID().toString()
 fun randomLog() = MonitorLog(
     entries = (1..10).map { randomLogEntry() }
 )
+fun randomBoolean() = SecureRandom().nextBoolean()
+fun randomDateTime() = DateTime(Instant.ofEpochMilli(randomLong()))
 
 fun randomLogEntry(timesQueried: Int = 0) = MonitorLogEntry(
     name = randomString(),
@@ -55,3 +53,4 @@ fun randomService() = MonitorService(
     name = randomString(),
     uri = randomString()
 )
+private fun randomLong() = SecureRandom().nextLong()
