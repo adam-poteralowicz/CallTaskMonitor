@@ -64,10 +64,10 @@ class CallTaskController @Inject constructor(
             name = getNameFromContacts.invoke(cursor),
             timesQueried = 0 // number of times log entry queried via API - initially it's zero
         )
-        val entries = if (log.entries?.isEmpty() == true) {
+        val entries = if (log.entries.isEmpty()) {
             listOf(logEntry)
         } else {
-            log.copy().entries?.toMutableList()?.plus(logEntry)
+            log.copy().entries.toMutableList().plus(logEntry)
         }
         logRepository.insertLog(log.copy(entries = entries))
         Log.d("CallTaskController::addLogEntry", "LogEntry::$logEntry")
@@ -77,10 +77,10 @@ class CallTaskController @Inject constructor(
         val service = MonitorServiceEntity(name = name, uri = uri)
         val rootFromDb = rootRepository.getRoot()
         rootFromDb?.let {
-            val services = if (it.services?.isEmpty() == true) {
+            val services = if (it.services.isEmpty()) {
                 listOf(service)
             } else {
-                it.copy().services?.toMutableList()?.plus(service)
+                it.copy().services.toMutableList().plus(service)
             }
             rootRepository.insertRoot(it.copy(services = services))
         } ?: run {

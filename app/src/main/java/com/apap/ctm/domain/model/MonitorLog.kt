@@ -1,5 +1,5 @@
 package com.apap.ctm.domain.model
 
 data class MonitorLog(
-    val entries: List<MonitorService>
+    val entries: List<MonitorLogEntry>
 )

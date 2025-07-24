@@ -10,13 +10,13 @@ class MonitorServiceConverter : BaseListConverter<MonitorServiceEntity>(MonitorS
 @Entity
 data class MonitorRootEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    @ColumnInfo("start") val start: String?,
-    @ColumnInfo("services") val services: List<MonitorServiceEntity>? = emptyList()
+    @ColumnInfo("start") val start: String,
+    @ColumnInfo("services") val services: List<MonitorServiceEntity> = emptyList()
 )
 
 @Entity
 data class MonitorServiceEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    @ColumnInfo(name = "name") val name: String?,
-    @ColumnInfo(name = "uri") val uri: String?
+    @ColumnInfo(name = "name") val name: String,
+    @ColumnInfo(name = "uri") val uri: String
 )

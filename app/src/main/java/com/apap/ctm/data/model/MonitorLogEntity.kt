@@ -10,17 +10,17 @@ class MonitorLogEntryConverter : BaseListConverter<MonitorLogEntryEntity>(Monito
 @Entity
 data class MonitorLogEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val entries: List<MonitorLogEntryEntity>? = emptyList()
+    val entries: List<MonitorLogEntryEntity> = emptyList()
 )
 
 @Entity
 data class MonitorLogEntryEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    @ColumnInfo(name = "beginning") val beginning: String?,
+    @ColumnInfo(name = "beginning") val beginning: String,
     @ColumnInfo(name = "duration") val duration: Int = 0,
-    @ColumnInfo(name = "number") val number: String?,
-    @ColumnInfo(name = "name") val name: String?,
-    @ColumnInfo(name = "timesQueried") val timesQueried: Int?
+    @ColumnInfo(name = "number") val number: String,
+    @ColumnInfo(name = "name") val name: String,
+    @ColumnInfo(name = "timesQueried") val timesQueried: Int
 ) {
     override fun toString(): String = "$beginning::$duration::$number::$name::$timesQueried"
 }
