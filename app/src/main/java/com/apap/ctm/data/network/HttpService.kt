@@ -95,7 +95,7 @@ class HttpService : Service() {
         unregisterReceiver(callStatusBroadcastReceiver)
         server?.stop(0,0 )
         coroutineScope.launch {
-            callTaskController.clearAllTables() // TODO only when local IP changes; keep active local IP in cache?
+            callTaskController.clearAllTables()
         }
         return false
     }

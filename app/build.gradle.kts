@@ -84,6 +84,7 @@ dependencies {
     implementation(libs.joda)
 
     testImplementation(libs.androidx.arch.core.test)
+    testImplementation(libs.assertj)
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.mockk)

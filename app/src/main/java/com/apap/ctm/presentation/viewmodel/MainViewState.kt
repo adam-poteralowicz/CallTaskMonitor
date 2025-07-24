@@ -4,6 +4,6 @@ import com.apap.ctm.domain.model.MonitorLogEntry
 
 data class MainViewState(
     val isServerStarted: Boolean = false,
-    val showPermissionDialog: List<String> = emptyList(),
+    val showPermissionDialog: List<MissingPermission> = emptyList(),
     val entries: List<MonitorLogEntry> = emptyList()
 )
