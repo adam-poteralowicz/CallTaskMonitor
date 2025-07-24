@@ -5,6 +5,7 @@ archCoreTesting = "2.2.0"
 assertJ = '3.22.0'
 composeBom = "2025.07.00"
 coreKtx = "1.16.0"
+coreKtxVersion = "1.6.1"
 espressoCore = "3.6.1"
 hilt = "2.57"
 hilt-navigation = "1.2.0"
@@ -23,6 +24,7 @@ turbine = "1.2.1"
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 assertj = { group = "org.assertj", name = "assertj-core", version.ref = "assertJ" }
+core-ktx = { module = "androidx.test:core-ktx", version.ref = "coreKtxVersion" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 androidx-arch-core-test = { group = "androidx.arch.core", name = "core-testing", version.ref = "archCoreTesting" }
@@ -41,6 +43,7 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3" 
 androidx-hilt-nav = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hilt-navigation" }
 google-hilt = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 google-hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
+google-hilt-testing = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hilt" }
 joda = { group = "joda-time", name = "joda-time", version.ref = "jodaTime" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinCoroutines" }
 ktor-gson = { group = "io.ktor", name = "ktor-serialization-gson", version.ref = "ktor" }
