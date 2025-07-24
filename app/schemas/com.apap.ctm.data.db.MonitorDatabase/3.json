@@ -1,12 +1,12 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 2,
-    "identityHash": "e0f57aa8a9332e754ea29317a8d86312",
+    "version": 3,
+    "identityHash": "c09164226ac7d7c77c953bfd6baf7aa3",
     "entities": [
       {
         "tableName": "MonitorLogEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `entries` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `entries` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -17,7 +17,8 @@
           {
             "fieldPath": "entries",
             "columnName": "entries",
-            "affinity": "TEXT"
+            "affinity": "TEXT",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -29,7 +30,7 @@
       },
       {
         "tableName": "MonitorRootEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `start` TEXT, `services` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `start` TEXT NOT NULL, `services` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -40,12 +41,14 @@
           {
             "fieldPath": "start",
             "columnName": "start",
-            "affinity": "TEXT"
+            "affinity": "TEXT",
+            "notNull": true
           },
           {
             "fieldPath": "services",
             "columnName": "services",
-            "affinity": "TEXT"
+            "affinity": "TEXT",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -57,7 +60,7 @@
       },
       {
         "tableName": "MonitorStatusEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `start` TEXT NOT NULL, `stop` TEXT NOT NULL, `duration` INTEGER NOT NULL, `ongoing` INTEGER, `number` TEXT, `name` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `start` TEXT NOT NULL, `stop` TEXT NOT NULL, `duration` INTEGER NOT NULL, `ongoing` INTEGER NOT NULL, `number` TEXT NOT NULL, `name` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -86,17 +89,20 @@
           {
             "fieldPath": "ongoing",
             "columnName": "ongoing",
-            "affinity": "INTEGER"
+            "affinity": "INTEGER",
+            "notNull": true
           },
           {
             "fieldPath": "number",
             "columnName": "number",
-            "affinity": "TEXT"
+            "affinity": "TEXT",
+            "notNull": true
           },
           {
             "fieldPath": "name",
             "columnName": "name",
-            "affinity": "TEXT"
+            "affinity": "TEXT",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -109,7 +115,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e0f57aa8a9332e754ea29317a8d86312')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c09164226ac7d7c77c953bfd6baf7aa3')"
     ]
   }
 }

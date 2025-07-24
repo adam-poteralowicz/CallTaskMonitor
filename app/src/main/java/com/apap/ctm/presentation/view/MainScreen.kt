@@ -47,7 +47,6 @@ fun MainScreen(
     horizontalAlignment = Alignment.CenterHorizontally
 ) {
     val state = viewModel.state.collectAsState()
-    val log = viewModel.log.collectAsState()
 
     if (state.value.showPermissionDialog.isNotEmpty()) {
         val permission = state.value.showPermissionDialog.joinToString()
@@ -88,9 +87,9 @@ fun MainScreen(
     )
     Spacer(Modifier.height(SPACER))
     if (state.value.isServerStarted) {
-        val entries = log.value?.entries
+        val entries = state.value.entries
         when {
-            entries?.isNotEmpty() == true -> ServerLog(entries)
+            entries.isNotEmpty() -> ServerLog(entries)
             else -> ServerLogEmptyState()
         }
     }
@@ -128,9 +127,7 @@ fun ServerLog(entries: List<MonitorLogEntry>) {
         items(entries) { entry ->
             HorizontalDivider(thickness = DIVIDER)
             val time = DateUtils.formatElapsedTime(entry.duration.toLong())
-            entry.name?.let { name ->
-                CallLogRow(name, time)
-            }
+            CallLogRow(entry.name, time)
         }
     }
 }

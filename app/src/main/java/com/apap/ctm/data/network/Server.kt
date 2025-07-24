@@ -14,11 +14,15 @@ import io.ktor.server.response.respondText
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
 
-fun Application.setUp(controller: CallTaskController) {
+private const val ROOT = "/"
+private const val LOG = "/log"
+private const val STATUS = "/status"
+
+fun Application.setUp(controller: CallTaskController) = with(controller) {
     install(ContentNegotiation) { gson {} }
     routing {
-        get("/") {
-            controller.getServices()?.let {
+        get(ROOT) {
+            getServices()?.let {
                 call.respond(HttpStatusCode.OK, it)
             } ?: call.respondText(
                 contentType = ContentType.parse("text/html"),
@@ -27,8 +31,8 @@ fun Application.setUp(controller: CallTaskController) {
                 """.trimIndent()
             )
         }
-        get("/status") {
-            controller.getStatus()?.let {
+        get(STATUS) {
+            getStatus()?.let {
                 call.respond(HttpStatusCode.OK, it)
             } ?: call.respondText(
                 contentType = ContentType.parse("text/html"),
@@ -37,28 +41,29 @@ fun Application.setUp(controller: CallTaskController) {
                 """.trimIndent()
             )
         }
-        get("/log") {
-            controller.getLog()?.let { result ->
-                val updatedLog = updateTimesQueried(result)
-                controller.insertLog(updatedLog)
+        get(LOG) {
+            getLog().let { result ->
+                clearEntries()
+                val updatedLog = updateTimesQueried(
+                    result,
+                    onEntryUpdated = { entry ->
+                        updateLogEntry(entry)
+                    }
+                )
+                insertLog(updatedLog)
                 call.respond(HttpStatusCode.OK, updatedLog)
-            } ?: call.respondText(
-                contentType = ContentType.parse("text/html"),
-                text = """
-                    <h3>NO LOGS AVAILABLE</h3>
-                """.trimIndent()
-            )
+            }
         }
     }
 }
 
-private fun updateTimesQueried(result: MonitorLog): MonitorLog {
+private suspend fun updateTimesQueried(result: MonitorLog, onEntryUpdated: suspend(MonitorLogEntry) -> Unit): MonitorLog {
     val log = result.copy()
     val entries = mutableListOf<MonitorLogEntry>()
-    result.entries?.forEach { entry ->
-        entry.timesQueried?.let {
-            entries.add(entry.copy(timesQueried = it.plus(1)))
-        } ?: entries.add(entry)
+    result.entries.forEach { entry ->
+        val updatedEntry = entry.copy(timesQueried = entry.timesQueried.plus(1))
+        entries.add(updatedEntry)
+        onEntryUpdated(updatedEntry)
     }
     return log.copy(entries = entries)
 }

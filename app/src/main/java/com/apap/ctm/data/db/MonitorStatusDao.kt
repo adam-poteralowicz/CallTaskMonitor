@@ -4,20 +4,20 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.apap.ctm.domain.model.MonitorStatus
+import com.apap.ctm.data.model.MonitorStatusEntity
 
 @Dao
 interface MonitorStatusDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(status: MonitorStatus)
+    suspend fun insert(status: MonitorStatusEntity)
 
-    @Query("UPDATE monitorStatus SET ongoing=:ongoing WHERE number=:number")
+    @Query("UPDATE monitorStatusEntity SET ongoing=:ongoing WHERE number=:number")
     suspend fun update(number: String, ongoing: Boolean)
 
-    @Query("DELETE FROM monitorStatus")
+    @Query("DELETE FROM monitorStatusEntity")
     suspend fun delete()
 
-    @Query("SELECT * FROM monitorStatus ORDER BY id DESC LIMIT 1")
-    fun getStatus(): MonitorStatus
+    @Query("SELECT * FROM monitorStatusEntity ORDER BY id DESC LIMIT 1")
+    fun getStatus(): MonitorStatusEntity?
 }

@@ -12,6 +12,7 @@ import android.os.IBinder
 import android.provider.ContactsContract.PhoneLookup
 import android.telephony.TelephonyManager
 import com.apap.ctm.R
+import com.apap.ctm.domain.model.MonitorService
 import com.apap.ctm.util.getLocalIPAddress
 import dagger.hilt.android.AndroidEntryPoint
 import io.ktor.server.engine.embeddedServer
@@ -119,8 +120,11 @@ class HttpService : Service() {
         coroutineScope.launch {
             val log = getString(R.string.log)
             val status = getString(R.string.status)
-            callTaskController.addService(name = status, uri = "$localIP:$PORT/$status")
-            callTaskController.addService(name = log, uri = "$localIP:$PORT/$log")
+            val services = listOf(
+                MonitorService(status, "$localIP:$PORT/$status"),
+                MonitorService(log, "$localIP:$PORT/$log")
+            )
+            callTaskController.addServices(services)
         }
     }
 

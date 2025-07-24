@@ -1,7 +1,6 @@
 package com.apap.ctm.data.network
 
 import android.database.Cursor
-import android.util.Log
 import com.apap.ctm.data.repository.MonitorLogRepository
 import com.apap.ctm.data.repository.MonitorRootRepository
 import com.apap.ctm.data.repository.MonitorStatusRepository
@@ -32,7 +31,6 @@ class CallTaskController @Inject constructor(
             number = number,
             name = getNameFromContacts.invoke(cursor)
         )
-        Log.d("CallTaskController::startCall", "name: ${status.name}, number: ${status.number}")
         statusRepository.insertStatus(status)
     }
 
@@ -48,14 +46,13 @@ class CallTaskController @Inject constructor(
                 stop = now.toDateTimeString(),
                 duration = duration
             )
-            Log.d("CallTaskController::stopCall", "name: $name, number: ${status.number}, duration: ${status.duration}")
             statusRepository.insertStatus(status)
         }
     }
 
     suspend fun addLogEntry(cursor: Cursor) {
         val status = statusRepository.getStatus() ?: return
-        val log = logRepository.getLog() ?: MonitorLog()
+        val log = logRepository.getLog()
 
         val logEntry = MonitorLogEntry(
             beginning = status.start,
@@ -64,33 +61,33 @@ class CallTaskController @Inject constructor(
             name = getNameFromContacts.invoke(cursor),
             timesQueried = 0 // number of times log entry queried via API - initially it's zero
         )
-        val entries = if (log.entries?.isEmpty() == true) {
+        logRepository.insertLogEntry(logEntry)
+        val entries = logRepository.getAllEntries()
+        val updatedEntries = if (entries.isEmpty()) {
             listOf(logEntry)
         } else {
-            log.copy().entries?.toMutableList()?.plus(logEntry)
+            entries.toMutableList().plus(logEntry)
         }
-        logRepository.insertLog(log.copy(entries = entries))
-        Log.d("CallTaskController::addLogEntry", "LogEntry::$logEntry")
+        logRepository.insertLog(log.copy(entries = updatedEntries))
     }
 
-    suspend fun addService(name: String, uri: String) {
-        val service = MonitorService(name = name, uri = uri)
+    suspend fun updateLogEntry(logEntry: MonitorLogEntry) {
+        logRepository.insertLogEntry(logEntry)
+    }
+
+    suspend fun addServices(services: List<MonitorService>) {
         val rootFromDb = rootRepository.getRoot()
         rootFromDb?.let {
-            val services = if (it.services?.isEmpty() == true) {
-                listOf(service)
-            } else {
-                it.copy().services?.toMutableList()?.plus(service)
+            if (it.services.isEmpty()) {
+                rootRepository.insertRoot(it.copy(services = services))
             }
-            rootRepository.insertRoot(it.copy(services = services))
         } ?: run {
             val root = MonitorRoot(
                 start = DateTime.now().toDateTimeString(),
-                services = listOf(service)
+                services = services
             )
             rootRepository.insertRoot(root)
         }
-        Log.d("CallTaskController::addService", "Service::$name @ $uri")
     }
 
     suspend fun insertLog(log: MonitorLog) {
@@ -105,7 +102,10 @@ class CallTaskController @Inject constructor(
 
     suspend fun clearAllTables() {
         rootRepository.deleteRoot()
-        logRepository.deleteLog()
         statusRepository.deleteStatus()
+    }
+
+    suspend fun clearEntries() {
+        logRepository.deleteEntries()
     }
 }
