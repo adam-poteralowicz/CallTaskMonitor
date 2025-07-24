@@ -35,10 +35,10 @@ class MainViewModel @Inject constructor(private val logRepository: MonitorLogRep
     fun onPermissionsNotGranted(permissions: List<String>) = viewModelScope.launch {
         if (permissions.isNotEmpty()) {
             val permission = when (permissions.distinct().first()) {
-                "android.permission.READ_CALL_LOG" -> "READ CALL LOG"
-                "android.permission.READ_CONTACTS" -> "READ CONTACTS"
-                "android.permission.READ_PHONE_STATE" -> "READ PHONE STATE"
-                else -> ""
+                "android.permission.READ_CALL_LOG" -> MissingPermission.READ_CALL_LOG
+                "android.permission.READ_CONTACTS" -> MissingPermission.READ_CONTACTS
+                "android.permission.READ_PHONE_STATE" -> MissingPermission.READ_PHONE_STATE
+                else -> MissingPermission.NONE
             }
             _state.emit(_state.value.copy(showPermissionDialog = listOf(permission)))
         } else {
@@ -49,4 +49,11 @@ class MainViewModel @Inject constructor(private val logRepository: MonitorLogRep
     fun refreshLogs() = viewModelScope.launch {
         _state.emit(_state.value.copy(entries = logRepository.getAllEntries()))
     }
+}
+
+enum class MissingPermission {
+    READ_CALL_LOG,
+    READ_CONTACTS,
+    READ_PHONE_STATE,
+    NONE
 }
