@@ -8,13 +8,8 @@ import com.apap.ctm.data.model.MonitorLogEntity
 import com.apap.ctm.data.model.MonitorLogEntryEntity
 import com.apap.ctm.data.repository.MonitorLogRepositoryImpl
 import com.apap.ctm.domain.model.MonitorLogEntry
-import com.apap.ctm.testUtils.randomDateTime
-import com.apap.ctm.testUtils.randomInt
 import com.apap.ctm.testUtils.randomLog
 import com.apap.ctm.testUtils.randomLogEntry
-import com.apap.ctm.testUtils.randomNumber
-import com.apap.ctm.testUtils.randomString
-import com.apap.ctm.util.toDateTimeString
 import io.ktor.util.reflect.instanceOf
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
