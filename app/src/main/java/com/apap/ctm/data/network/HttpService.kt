@@ -27,7 +27,6 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 
-
 @Singleton
 @AndroidEntryPoint
 class HttpService : Service() {
@@ -96,7 +95,7 @@ class HttpService : Service() {
         unregisterReceiver(callStatusBroadcastReceiver)
         server?.stop(0,0 )
         coroutineScope.launch {
-            callTaskController.clearAllTables()
+            callTaskController.clearAllTables() // TODO only when local IP changes; keep active local IP in cache?
         }
         return false
     }

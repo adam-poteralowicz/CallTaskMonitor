@@ -8,8 +8,6 @@ import com.apap.ctm.domain.model.MonitorLog
 import com.apap.ctm.domain.model.MonitorLogEntry
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -34,13 +32,6 @@ class MonitorLogRepositoryImpl @Inject constructor(
         dao.getLog()?.let {
             mapper.toDomain(it.copy(entries = entries))
         } ?: MonitorLog(entries = entries.map { entryMapper.toDomain(it) })
-    }
-
-    override fun getLogFlow() : Flow<MonitorLog> {
-        val flow = dao.getLogFlow()
-        return flow.map {
-            mapper.toDomain(it)
-        }
     }
 
     override suspend fun insertLogEntry(logEntry: MonitorLogEntry) {
