@@ -19,5 +19,5 @@ interface MonitorStatusDao {
     suspend fun delete()
 
     @Query("SELECT * FROM monitorStatusEntity ORDER BY id DESC LIMIT 1")
-    fun getStatus(): MonitorStatusEntity
+    fun getStatus(): MonitorStatusEntity?
 }

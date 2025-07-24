@@ -8,11 +8,17 @@ class MonitorLogMapper @Inject constructor(
     private val logEntryMapper: MonitorLogEntryMapper
 ) {
 
-    fun toEntity(log: MonitorLog) = MonitorLogEntity(
-        entries = log.entries.map { logEntryMapper.toEntity(it) }
-    )
+    fun toEntity(log: MonitorLog) : MonitorLogEntity {
+        val mapped = MonitorLogEntity(
+            id = log.entries.count(),
+            entries = log.entries.map {
+                logEntryMapper.toEntity(id = log.entries.indexOf(it), entry = it)
+            }
+        )
+        return mapped
+    }
 
-    fun toDomain(entity: MonitorLogEntity) = MonitorLog(
-        entries = entity.entries.map { logEntryMapper.toDomain(it) }
-    )
+    fun toDomain(entity: MonitorLogEntity?) = MonitorLog(entries = entity?.entries?.map {
+        logEntryMapper.toDomain(it)
+    } ?: emptyList())
 }

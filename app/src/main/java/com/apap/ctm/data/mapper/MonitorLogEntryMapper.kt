@@ -7,7 +7,8 @@ import javax.inject.Inject
 class MonitorLogEntryMapper @Inject constructor()
 {
 
-    fun toEntity(entry: MonitorLogEntry) = MonitorLogEntryEntity(
+    fun toEntity(id: Int, entry: MonitorLogEntry) = MonitorLogEntryEntity(
+        id = id,
         beginning = entry.beginning,
         duration = entry.duration,
         number = entry.number,

@@ -48,6 +48,11 @@ class MainActivity : ComponentActivity() {
         setUpObservers()
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.refreshLogs()
+    }
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String?>,

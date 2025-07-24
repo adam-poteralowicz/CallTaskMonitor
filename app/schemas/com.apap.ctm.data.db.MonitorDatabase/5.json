@@ -1,8 +1,8 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 4,
-    "identityHash": "c09164226ac7d7c77c953bfd6baf7aa3",
+    "version": 5,
+    "identityHash": "471be44382916454a400c2879012e9a4",
     "entities": [
       {
         "tableName": "MonitorLogEntity",

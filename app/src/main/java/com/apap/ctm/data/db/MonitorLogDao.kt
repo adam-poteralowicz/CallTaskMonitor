@@ -17,8 +17,8 @@ interface MonitorLogDao {
     suspend fun delete()
 
     @Query("SELECT * FROM monitorLogEntity")
-    suspend fun getLog(): MonitorLogEntity
+    suspend fun getLog(): MonitorLogEntity?
 
-    @Query("SELECT * FROM monitorlogEntity")
+    @Query("SELECT * FROM monitorLogEntity")
     fun getLogFlow(): Flow<MonitorLogEntity?>
 }

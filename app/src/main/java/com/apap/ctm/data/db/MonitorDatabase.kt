@@ -7,6 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.apap.ctm.data.model.MonitorLogEntity
 import com.apap.ctm.data.model.MonitorLogEntryConverter
+import com.apap.ctm.data.model.MonitorLogEntryEntity
 import com.apap.ctm.data.model.MonitorRootEntity
 import com.apap.ctm.data.model.MonitorServiceConverter
 import com.apap.ctm.data.model.MonitorStatusEntity
@@ -14,10 +15,11 @@ import com.apap.ctm.data.model.MonitorStatusEntity
 @Database(
     entities = [
         MonitorLogEntity::class,
+        MonitorLogEntryEntity::class,
         MonitorRootEntity::class,
-        MonitorStatusEntity::class
+        MonitorStatusEntity::class,
     ],
-    version = 4,
+    version = 5,
     exportSchema = true
 )
 @TypeConverters(MonitorLogEntryConverter::class, MonitorServiceConverter::class)
@@ -43,4 +45,5 @@ abstract class MonitorDatabase : RoomDatabase() {
     abstract fun logDao(): MonitorLogDao
     abstract fun rootDao(): MonitorRootDao
     abstract fun statusDao(): MonitorStatusDao
+    abstract fun entriesDao(): MonitorLogEntryDao
 }
